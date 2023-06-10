@@ -60,7 +60,39 @@ const issueBooks=async(req,res,next)=>{
 
 /**
  * I WILL ADD THE OTHE CONTROLLERS GETN NEW OS CONTINUE LATER**/
+const returnBook=async(req,res,next)=>{
+    const {bookId}=req.body;
+    const issuedBookUser=req.userId;
+    const issuedBook=await bookSchema.findOne(
+        {_id:bookId,issuedBookUser})
+    if(issuedBook){
+        var late=moment().diff(issuedBook.returnDate,"days")
+        if(late<0){
+            late=0;
+        }
+        const fine=late*50;
+        let returnedBook=await bookSchema.findByIdAndUpdate(bookId,{
+            isIssued:false,late,fine
+        },{new:true})
+        if(returnedBook){
+            await userSchema.findByIdAndUpdate({_id:issuedBookUser},{$push:{
+                issuedBook:returnedBook
+            }})
 
+            await bookSchema.updateOne({_id:bookId},{$unset:{issuedDate:1,
+                returnDate:1,late:1,fine:1,issuedBookUser:1}})
+            res.status(200).json({
+                msg:"Success!"
+            })
+        }
+    }
+    else{
+        return res.status(500).json({
+            msg:"Somthing is wrong"
+        })
+    }
+
+}
 
 
 module.exports={
