@@ -9,18 +9,24 @@ const userAuth=async (req,res,next)=>{
         const decode=jwt.verify(token,process.env.JWT_TOKEN)
         if(!decode.userId || !decode.userEmail){
             // create err bridge
-            next()
+          res.status(401).json({
+            msg:"failed"
+          })
         }else{
             const user=await UserSchema.findById(decode.userId)
             if(user && user.isActive){
                 req.userId=decode.userId;
                 next();
             }else{
-                // create error bridge
-                next()
+               res.status(400).json({
+                msg:"Failed"
+               })
             }
         }
     }catch(err){
+        res.status(500).json({
+            msg:"Something went wrong"
+        })
         console.log(err)
     }
 }

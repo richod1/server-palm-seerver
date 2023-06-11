@@ -8,14 +8,24 @@ const verifyResetPasswordToken = async(req,res,next)=>{
     {
         const token = req.header('token');
         jwt.verify(token,process.env.JWT_RESET_TOKEN, async(err,decoded)=>{
-        err ? next(new AppError("Invalid token",400)) : next()
+            
+    if(err) {return res.status(401).json({
+        msg:"failed"})
+    }else{ 
+              return res.status(201).json({
+              msg:"success"})}
+             
+        // err ? next(new AppError("Invalid token",400)) : next()
     })  
     } 
     
     catch (error) 
     {
-        next(new AppError(error,400))
+        return res.status(500).json({
+            msg:"failed something went wromg!"
+        })
     }
+    next();
      
 }
 
