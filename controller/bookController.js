@@ -32,6 +32,17 @@ res.status(200).json({
 })
 }
 
+const getBookById=async(req,res,next)=>{
+    const {id}=req.params;
+    const book=await bookSchema.findById(id);
+    return res.status(201).json({
+        msg:"Success",data:book
+    })
+
+    next();
+
+}
+
 const issueBooks=async(req,res,next)=>{
     const {bookId,issuedDurationInDays}=req.body;
     var issuedBookUser=req.userId;
@@ -146,6 +157,7 @@ module.exports={
     addbook,
     getAllbooks,
     getAllBooksByName,
+    getBookById,
     issueBooks,
     returnBook,
     getIssuedBooks,
