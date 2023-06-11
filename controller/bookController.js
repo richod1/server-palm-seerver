@@ -100,6 +100,7 @@ module.exports={
     getAllbooks,
     getAllBooksByName,
     issueBooks,
+    returnBook,
     
 
 }
