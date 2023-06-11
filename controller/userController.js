@@ -124,6 +124,7 @@ if(!user){
 return res.status(201).json({
     msg:"user deleted successfully"
 })
+next()
 }
 
 

@@ -1,56 +1,51 @@
 const express=require('express')
 const router=express.Router();
 const auth=require('../middleware/auth')
-const userValidation=require('../validation/userValidator')
+const verifyResetPasswordToken=require("../middleware/verifyResetPasswordToken")
+// const userValidation=require('../validation/userValidator')
 const userAuth=require('../middleware/auth.js')
 const userController=require("../controller/userController")
-
+const validation=require("../middleware/validation")
+const userValidator=require("../validator/userValidator")
 
 
 //signup
-router.post('/signup',)
+router.post('/signup',validation(userValidator.signUpSchema),
+userController.signup)
 
 //signin
-router.post('/signin',()=>{
-
-})
+router.post('/signin',validation(userValidator.signInSchema),
+userController.signIn)
 
 
 // get user auth
-router.get('/',()=>{
-
-})
+router.get('/',userAuth,userController.getUserData)
 
 //update user
-router.put('/',()=>{
-
-})
+router.put('/',userAuth,validation(userValidator.updateUserSchema),
+userController.updateUser)
 
 // delete user
-router.delete('/',()=>{
+router.delete('/',userAuth,userController.deleteUser)
 
-})
+// user delete
+router.patch('/',userAuth,userController.softDeleteUser)
 
-router.get('/verify/:token',()=>{
+// usere update
 
-})
+router.get('/verify/:token',userController.updateUser)
 
 // forget password
-router.post('/forget_password',()=>{
-
-})
+router.post('/forget_password',validation(userValidator.emailSchema),
+userController.forgetPassword)
 
 // reset password
-router.patch('/reset_password',()=>{
-
-})
+router.patch('/reset_password',verifyResetPasswordToken,validation(userValidator.passwordSchema),
+userController.changePassword)
 
 // change password
-router.put('/changePassword',()=>{
+router.put('/changePassword',userAuth,validation(userValidator.changePasswordSchema),
+userController.changePassword)
 
-})
-
-router.patch('/logout',()=>{
-
-})
+router.patch('/logout',userAuth,userController.logout)
 
