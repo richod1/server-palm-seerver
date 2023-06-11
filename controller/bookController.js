@@ -95,12 +95,62 @@ const returnBook=async(req,res,next)=>{
 }
 
 
+// get all issued books fo=rom user
+const getIssuedBooks=async(req,res,next)=>{
+    const _id=req.userId;
+    const user=await userSchema.findById(_id)
+    const issuedBooks=user.issuedBook;
+    if(!user){
+        return res.status(401).json({
+            msg:error.message
+        })
+    }
+    return res.status(201).json({
+        msg:"Success",data:issuedBooks
+    })
+    next();
+}
+
+
+// get all ubnreturn books
+const getNonReturnBooks=async(req,res,next)=>{
+    const issuedBookUser=req.userId;
+    const nonReturnedBook=await bookSchema.find({issuedBookUser}).sort(
+        {returnDate:1})
+    res.status(201).json({
+        msg:"Success",data:nonReturnedBook
+    })
+    next();
+}
+
+const searchIssuedBooks=async(req,res,next)=>{
+    const {bookName}=req.params;
+    var _id =req.userId;
+    const user=await userSchema.findById(_id).sort({returnDate:1})
+    const issuedBooks=(user.issuedBook).filter((book)=>book.name.toLowerCase()
+    .includes(bookName.toLowerCase()))
+
+    if(!user){
+        return res.status(401).json({
+            msg:"Failed"
+        })
+    }
+    return res.status(201).json({
+        msg:"Success",data:issuedBooks
+    })
+
+    next();
+}
+
 module.exports={
     addbook,
     getAllbooks,
     getAllBooksByName,
     issueBooks,
     returnBook,
+    getIssuedBooks,
+    getNonReturnBooks,
+    searchIssuedBooks,
     
 
 }
